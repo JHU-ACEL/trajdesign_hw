@@ -109,13 +109,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-    ### 2.3 - Compare the final state of the system using Euler and RK4 with matrix exponential and return the final x and y error.
-
-
-    """
-    )
+    mo.md(r"""### 2.3 - Compare the final state of the system using Euler and RK4 with matrix exponential and return the final x and y error.""")
     return
 
 
