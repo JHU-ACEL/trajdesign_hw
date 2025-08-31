@@ -13,7 +13,9 @@ mkdir -p build
 cd build
 
 echo "Building acados with cmake"
-cmake -DACADOS_WITH_QPOASES=ON .. && make install
+cmake -DACADOS_WITH_QPOASES=ON  \
+      -DACADOS_WITH_HPIPM=ON \
+      -DACADOS_WITH_OSQP=ON .. && make install
 
 cd /
 
