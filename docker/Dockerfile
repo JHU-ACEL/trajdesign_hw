@@ -18,8 +18,13 @@ RUN apt-get update
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && ln -fs /usr/share/zoneinfo/US/Pacific /etc/localtime && apt-get install -y tzdata && dpkg-reconfigure --frontend noninteractive tzdata
 
+RUN python3 -m pip install -U pip
+
 # Install python packages (casadi, jax, etc.)
-RUN python3 -m pip install -U pip && python3 -m pip install -U opencv-python numpy Pillow matplotlib scipy sympy natsort h5py seaborn ipython jupyter jupyterlab matplotlib scipy marimo jax casadi cvxpy qpax tqdm
+RUN python3 -m pip install --no-cache-dir \
+    "jax[cpu]" \
+    -f https://storage.googleapis.com/jax-releases/jax_releases.html
+RUN python3 -m pip install -U opencv-python numpy Pillow matplotlib scipy sympy natsort h5py seaborn ipython jupyter jupyterlab matplotlib scipy marimo casadi cvxpy qpax tqdm
 
 # Install ipopt
 RUN apt-get install -y coinor-libipopt-dev -y
