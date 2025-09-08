@@ -1,0 +1,118 @@
+import marimo
+
+__generated_with = "0.15.2"
+app = marimo.App(width="medium")
+
+
+@app.cell
+def _():
+    import jax
+    import jax.numpy as jnp
+    import jax.scipy as jsp
+    import matplotlib.pyplot as plt
+
+    from solvers import PDIPSolver
+    from qp_tester import PDIPTester
+
+    import marimo as mo
+    return (mo,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    In this homework, we will solve quadratic programs of the form:
+
+    \begin{align}
+        \underset{x}{\textrm{minimize}} \,\, & \frac{1}{2}x^TQx + q^Tx \nonumber \\
+        \textrm{subject to} 
+        \,\,& Ax=b\nonumber \\ 
+        \,\,&  Gx \leq h \nonumber\\
+    \end{align}
+
+    where $x \in \mathbb{R}^n$, $Q \in \mathbf{S}^n_+$, and $q \in \mathbb{R}^n$.
+
+    The linear equality constraints are given by $A \in \mathbb{R}^{n_\text{eq} \times n}$ and $b \in \mathbb{R}^{n_\text{eq}}$.
+
+    The linear inequality constraints are $G \in \mathbb{R}^{n_\text{ineq} \times n}$ and $h \in \mathbb{R}^{n_\text{ineq}}$.
+
+    To solve this problem, we will be implementing the solver detailed in Section 5 of the [`CVXGEN: a code generator for embedded convex
+    optimization`](https://web.stanford.edu/~boyd/papers/pdf/code_gen_impl.pdf) paper.
+
+    We will do so by implementing the following functions in the `Solver` class:
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    1. `init_soln`:
+    Solve the following system given in Section 5.2 of the `CVXGEN` paper:
+    $\begin{pmatrix} Q & G^T & A^T\\ G & -I & 0\\ A & 0 & 0 \end{pmatrix}\begin{pmatrix}x\\ z\\ y \end{pmatrix} = \begin{pmatrix} -q\\ h\\ b \end{pmatrix}$
+
+    Use the solution to this system to initialize $x^{(0)}$ and $z^{(0)}$ and then solve for $s^{(0)}$ and $z^{(0)}$ using the routine described in the paper to ensure non-negativity.
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    2. `compute_residuals`: Compute the residuals that we are trying to drive to zero:
+
+    $\begin{pmatrix}r_1\\ r_2\\ r_3\\ r_4\end{pmatrix} = \begin{pmatrix} -(A^T \bar{y} + G^T \bar{z} + Q \bar{x} + q)\\ -\text{diag}(\bar{s}) \bar{z}\\ -(G\bar{x}+\bar{s} - h)\\ -(A \bar{x} - b)\end{pmatrix}$
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    3. `solve_kkt_system`: Solve the KKT system
+
+    $\begin{pmatrix} Q & 0 & G^T & A^T\\ 0 & \text{diag}(\bar{z}) & \text{diag}(\bar{s}) & 0\\ G & I & 0 & 0\\ A & 0 & 0 & 0 \end{pmatrix} \begin{pmatrix} \Delta x\\ \Delta s\\ \Delta z\\ \Delta y \end{pmatrix} = \begin{pmatrix} u_1\\ u_2\\ u_3\\ u_4 \end{pmatrix}$
+
+    **Note**: This `solve_kkt_system` method will be used twice - first to compute $(\Delta x^\text{aff}, \Delta s^\text{aff}, \Delta z^\text{aff}, \Delta y^\text{aff})$ and second to compute $(\Delta x^\text{cc}, \Delta s^\text{cc}, \Delta z^\text{cc}, \Delta y^\text{cc})$. Accordingly, make sure to pass the correct right hand side values $(u_1, u_2, u_3, u_4)$ for each step.
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    4. `compute_centering_plus_corrector`:
+
+    Compute the centering-plus-corrector direction steps:
+
+    $\begin{pmatrix} Q & 0 & G^T & A^T\\ 0 & \text{diag}(\bar{z}) & \text{diag}(\bar{s}) & 0\\ G & I & 0 & 0\\ A & 0 & 0 & 0 \end{pmatrix} \begin{pmatrix} \Delta x^\text{cc}\\ \Delta s^\text{cc}\\ \Delta z^\text{cc}\\ \Delta y^\text{cc} \end{pmatrix} = \begin{pmatrix} 0 \\ \sigma\mu\overrightarrow{1} - \text{diag}(\Delta s^\text{aff})\Delta z^\text{aff}\\0\\0 \end{pmatrix}$
+
+    where
+
+    $\sigma = ( \frac{\| \bar{s} + \alpha \Delta s^\text{aff} \|_2^2}{\bar{s}^T\bar{z}} )^3$
+
+    and
+
+    $\mu = \frac{\bar{s}^T\bar{z}}{n_\text{ineq}}$
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""5. `solve_qp`: This function will use the preceding functions to run through the QP solution routine.""")
+    return
+
+
+if __name__ == "__main__":
+    app.run()
