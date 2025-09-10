@@ -84,12 +84,15 @@ class PDIPSolver():
 
     def compute_centering_plus_corrector(self, s0: jax.Array, ds: jax.Array, z0: jax.Array, dz: jax.Array) -> None:
         """
-        Follows correction from Section 5.2 in CVXGEN paper
+	Computes the sigma and mu terms used for the centering-plus-corrector step from Section 5.2 in CVXGEN paper.
+	Hint: you should be able to reuse self.compute_line_search here.
         """
         raise NotImplementedError("PDIPSolver.compute_centering_plus_corrector has yet to be implemented")
 
     def compute_line_search(self, s0: jax.Array, ds: jax.Array, z0: jax.Array, dz: jax.Array, n_steps: int = 500, tol: float = 1e-4):
         """
+	The line search procedure that ensures s0+alpha*ds >= 0 and z0+alpha*ds >= 0
+
         Parameters:
             s0 (jnp.array): current iterate for slack variable s.
             ds (jnp.array): descent direction for slack variable s.
@@ -117,14 +120,15 @@ class PDIPSolver():
     def solve_kkt_system(self, r1: jax.Array, r2: jax.Array, r3: jax.Array, r4: jax.Array, sbar: jax.Array, zbar: jax.Array):
         """
         Solves the KKT system at the current iteration using the residual values.
+	Note that sbar and zbar is passed in as the KKT matrix depends on the current value of those variables.
 
         Parameters:
             r1 (jnp.array): Residual for KKT derivative
             r2 (jnp.array): Residual for complementary slackness
             r3 (jnp.array): Residual for inequality constraint
             r4 (jnp.array): Residual for equality constraint
-            sbar (jnp.array)
-            zbar (jnp.array)
+            sbar (jnp.array): Current value for slack value s
+            zbar (jnp.array): Current value for dual variable z
 
         Returns:
             dx (jnp.array): descent direction for primal x
@@ -141,6 +145,7 @@ class PDIPSolver():
         2. Carry out max_qp_iter number of iterations of solving the KKT system
             2a. At each iteration, use self.compute_residuals and self.solve_kkt_system
             2b. Use self.compute_centering_plus_corrector for correcting dz and ds corrections
+		Hint: you should be able to use self.solve_kkt_system for both the affine and centering-corrector step
             2c. Use self.compute_line_search to compute the step size
             2d. Check for convergence
 
