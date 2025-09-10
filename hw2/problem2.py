@@ -11,11 +11,12 @@ def _():
     import jax.scipy as jsp
     import matplotlib.pyplot as plt
 
-    # from solvers import PDIPSolver
-    # from qp_tester import PDIPTester
+    from solvers import PDIPSolver
+    from ocp import OCPSolver
+    from qp_tester import PDIPTester
 
     import marimo as mo
-    return (mo,)
+    return OCPSolver, PDIPSolver, jnp, mo
 
 
 @app.cell(hide_code=True)
@@ -82,6 +83,124 @@ def _(mo):
     4. `compute_ineq_con`: use the upper/lower bounds for state ($x_\text{min}$ and $x_\text{max}$) and control ($u_\text{min}$ and $u_\text{max}$) to construct the inequality constraint matrix $G$ and vector $h$.
     """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Now test out your implementation. The following has a simple set of parameters for the number of time steps $N$ and and time step $\Delta h$.""")
+    return
+
+
+@app.cell
+def _(jnp):
+    nx = 4
+    nu = 2
+    N = 1
+
+    dh = 0.5
+    Ak = jnp.vstack((
+        jnp.hstack((jnp.eye(2), dh*jnp.eye(2))),
+        jnp.hstack((jnp.zeros((2,2)), jnp.eye(2)))
+    ))
+    Bk = jnp.vstack((
+        0.5*dh**2*jnp.eye(2),
+        dh*jnp.eye(2)
+    ))
+    return Ak, Bk, N, nu, nx
+
+
+@app.cell
+def _(OCPSolver):
+    ocp_solver = OCPSolver()
+    return (ocp_solver,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Define $x_\text{init}$ as the initial position and velocity of the spacecraft in 2D""")
+    return
+
+
+@app.cell
+def _(jnp):
+    x_init = jnp.array([9.4, 7.2, -0.5, 1.0])
+    return (x_init,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    Define cost matrices $Q_\text{mat}$ and $R_\text{mat}$.
+
+    **Note** that these matrices are not the same as the $Q$ and $R$ matrices above! These $Q_\text{mat}$ and $R_\text{mat}$ are the matrices used to compute stagewise cost, i.e., $x_k^T Q_\text{math} x_k$.
+    """
+    )
+    return
+
+
+@app.cell
+def _(jnp, nu, nx):
+    Q_mat = 2*jnp.eye(nx)
+    R_mat = jnp.eye(nu)
+    return Q_mat, R_mat
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Instantiate upper and lower bounds for state and control""")
+    return
+
+
+@app.cell
+def _(jnp):
+    x_min = jnp.array([-10.0, -10, -5, -5])
+    x_max = jnp.array([10.0, 10, 5, 5])
+
+    u_min = jnp.array([-15.0, -15])
+    u_max = jnp.array([15.0, 15])
+    return u_max, u_min, x_max, x_min
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Once you've defined all of the methods in the `OCPSolver` class, activate the cell below and instantiate the QP corresponding to the optimal control problem at the top of the page.""")
+    return
+
+
+@app.cell(disabled=True)
+def _(
+    Ak,
+    Bk,
+    N,
+    Q_mat,
+    R_mat,
+    jnp,
+    nu,
+    nx,
+    ocp_solver,
+    u_max,
+    u_min,
+    x_init,
+    x_max,
+    x_min,
+):
+    A_eq = ocp_solver.compute_equality_matrix(Ak, Bk, N)
+    b_eq = ocp_solver.compute_equality_bc(x_init, Ak, N)
+
+    G_ineq, h_ineq = ocp_solver.compute_ineq_con(x_min, x_max, u_min, u_max, N)
+
+    P = ocp_solver.compute_cost_term(Q_mat, R_mat, N)
+    p = jnp.zeros(N*(nx+nu))
+    return A_eq, G_ineq, P, b_eq, h_ineq, p
+
+
+@app.cell(disabled=True)
+def _(A_eq, G_ineq, P, PDIPSolver, b_eq, h_ineq, p):
+    solver = PDIPSolver()
+    solver.init_problem(2*P, p, A_eq, b_eq, G_ineq, h_ineq)
+    costs = solver.solve_qp(verbose=True)
     return
 
 
