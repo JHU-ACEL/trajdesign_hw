@@ -40,7 +40,7 @@ def _(mo):
     To solve this problem, we will be implementing the solver detailed in Section 5 of the [`CVXGEN: a code generator for embedded convex
     optimization`](https://web.stanford.edu/~boyd/papers/pdf/code_gen_impl.pdf) paper.
 
-    We will do so by implementing the following functions in the `Solver` class:
+    Notably, this solver is the same one SpaceX uses to land its rockets! [1](https://ee.stanford.edu/news/2021/jan/stephen-boyd-cvxgen-guides-spacex-falcon), [2](https://discourse-data.ams3.cdn.digitaloceanspaces.com/original/3X/1/1/11dbbcbc9f31e7323f4cbb433cb4a24c81cdad43.pdf)
     """
     )
     return
@@ -50,6 +50,8 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    We will do so by implementing the following functions in the `Solver` class:
+
     1. `init_soln`:
     Solve the following system given in Section 5.2 of the `CVXGEN` paper:
     $\begin{pmatrix} Q & G^T & A^T\\ G & -I & 0\\ A & 0 & 0 \end{pmatrix}\begin{pmatrix}x\\ z\\ y \end{pmatrix} = \begin{pmatrix} -q\\ h\\ b \end{pmatrix}$
@@ -102,7 +104,7 @@ def _(mo):
 
     and
 
-    $\mu = \frac{\bar{s}^T\bar{z}}{n_\text{ineq}}$
+    $\mu = \frac{\bar{s}^T\bar{z}}{p}$
     """
     )
     return
