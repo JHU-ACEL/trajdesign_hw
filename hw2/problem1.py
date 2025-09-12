@@ -15,7 +15,7 @@ def _():
     from qp_tester import PDIPTester
 
     import marimo as mo
-    return (mo,)
+    return PDIPTester, jnp, mo
 
 
 @app.cell(hide_code=True)
@@ -113,6 +113,40 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""5. `solve_qp`: This function will use the preceding functions to run through the QP solution routine.""")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## Once you're done implementing these class methods, solve the following "simple" QP""")
+    return
+
+
+@app.cell(disabled=True)
+def _(jnp):
+    P = jnp.array([[2.0, 0, 0, 0], [0, 2., 0, 0], [0, 0, 2., 0], [0., 0, 0, 1.]])
+    p = jnp.array([1.0, -2., 1.0, 2.])
+
+    A_eq = jnp.array([[1, 1, 0, 0], [1, 0, -1, 0]])
+    b_eq = jnp.array([8., -7.0])
+
+    G_ineq = jnp.array([[1., 0, 0, 0],
+                        [-1, 0., 0, 0],
+                        [0., 1., 0., 0],
+                       ])
+    h_ineq = jnp.array([15.0, -15, 15.])
+    return A_eq, G_ineq, P, b_eq, h_ineq, p
+
+
+@app.cell(disabled=True)
+def _(A_eq, G_ineq, P, PDIPTester, b_eq, h_ineq, p):
+    tester = PDIPTester(P, p, A_eq, b_eq, G_ineq, h_ineq)
+    tester.compare_solutions()
+    return
+
+
+@app.cell
+def _():
     return
 
 

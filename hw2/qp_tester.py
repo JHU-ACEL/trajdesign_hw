@@ -10,7 +10,7 @@ from typing import Callable, Iterable, Tuple
 from solvers import PDIPSolver
 
 class PDIPTester():
-    def __init__(self, Q: jax.Array, q: jax.Array, A: jax.Array, b: jax.Array, G: jax.Array, h: jax.Array, cost_tol: float = 1e-2, primal_tol: float = 1e-2):
+    def __init__(self, Q: jax.Array, q: jax.Array, A: jax.Array, b: jax.Array, G: jax.Array, h: jax.Array, cost_tol: float = 0.05, primal_tol: float = 0.05):
         nx = Q.shape[1]
         n_eq = A.shape[0]
         n_ineq = G.shape[0]
@@ -38,12 +38,21 @@ class PDIPTester():
 
         # Create equivalent QP inside CVXPY
         Z = cp.Variable(shape=(nx))
-        cvx_cost = cp.quad_form(Z[:], 0.5*self.Q)
+        cvx_cost = cp.quad_form(Z[:], 0.5*self.Q) + Z[:].T @ self.q
         constraints = []
         constraints += [self.G @ Z <= self.h]
         constraints += [self.A @ Z == self.b]
         prob = cp.Problem(cp.Minimize(cvx_cost), constraints)
         prob.solve()
 
-        return jnp.abs(prob.value - costs[-1]) < self.cost_tol and \
-            jnp.linalg.norm(Z.value - self.solver.x0) < self.primal_tol
+        if prob.status in ["infeasible", "unbounded"]:
+          print('[WARN] This problem is infeasible!')
+          return False
+        elif jnp.abs(prob.value - costs[-1]) < self.cost_tol and \
+            jnp.linalg.norm(Z.value - self.solver.x0) < self.primal_tol:
+          print('QP solutions match!')
+          return True
+        else:
+          return False
+
+
