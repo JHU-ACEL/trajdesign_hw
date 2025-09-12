@@ -10,16 +10,16 @@ from typing import Callable, Iterable, Tuple
 from solvers import PDIPSolver
 
 class PDIPTester():
-    def __init__(self, Q: jax.Array, q: jax.Array, A: jax.Array, b: jax.Array, G: jax.Array, h: jax.Array, cost_tol: float = 0.05, primal_tol: float = 0.05):
-        nx = Q.shape[1]
+    def __init__(self, P: jax.Array, p: jax.Array, A: jax.Array, b: jax.Array, G: jax.Array, h: jax.Array, cost_tol: float = 0.05, primal_tol: float = 0.05):
+        nx = P.shape[1]
         n_eq = A.shape[0]
         n_ineq = G.shape[0]
-        assert nx == q.size
+        assert nx == p.size
         assert n_eq == b.size
         assert n_ineq == h.size
 
-        self.Q = Q
-        self.q = q
+        self.P = P
+        self.p = p
         self.A = A
         self.b = b
         self.G = G
@@ -30,15 +30,15 @@ class PDIPTester():
 
         # Initialize JAX solver
         self.solver = PDIPSolver()
-        self.solver.init_problem(self.Q, self.q, self.A, self.b, self.G, self.h)
+        self.solver.init_problem(self.P, self.p, self.A, self.b, self.G, self.h)
 
     def compare_solutions(self) -> bool:
         costs = self.solver.solve_qp(verbose=False)
-        nx = self.Q.shape[1]
+        nx = self.P.shape[1]
 
         # Create equivalent QP inside CVXPY
         Z = cp.Variable(shape=(nx))
-        cvx_cost = cp.quad_form(Z[:], 0.5*self.Q) + Z[:].T @ self.q
+        cvx_cost = cp.quad_form(Z[:], 0.5*self.P) + Z[:].T @ self.p
         constraints = []
         constraints += [self.G @ Z <= self.h]
         constraints += [self.A @ Z == self.b]
