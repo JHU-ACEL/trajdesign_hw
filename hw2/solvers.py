@@ -86,6 +86,16 @@ class PDIPSolver():
         """
 	Computes the sigma and mu terms used for the centering-plus-corrector step from Section 5.2 in CVXGEN paper.
 	Hint: you should be able to reuse self.compute_line_search here.
+
+        Parameters:
+            s0 (jnp.array): current iterate for slack variable s.
+            ds (jnp.array): descent direction for slack variable s.
+            z0 (jnp.array): current iterate for dual variable z.
+            dz (jnp.array): descent direction for dual variable s.
+
+        Returns:
+            mu (float): mu term for centering-corrector step
+            sigma (float): sigma term for centering-corrector step
         """
         raise NotImplementedError("PDIPSolver.compute_centering_plus_corrector has yet to be implemented")
 
