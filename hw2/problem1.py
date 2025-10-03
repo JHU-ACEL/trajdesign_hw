@@ -100,7 +100,7 @@ def _(mo):
 
     where
 
-    $\sigma = ( \frac{\| (\bar{s} + \alpha \Delta s^\text{aff})^T (\bar{z} + \alpha \Delta z^\text{aff}) \|_2^2}{\bar{s}^T\bar{z}} )^3$
+    $\sigma = ( \frac{(\bar{s} + \alpha \Delta s^\text{aff})^T (\bar{z} + \alpha \Delta z^\text{aff}) }{\bar{s}^T\bar{z}} )^3$
 
     and
 
