@@ -82,7 +82,7 @@ class PDGSolver():
         x (cp.Variable): cvxpy array of size 6xN for state trajectory.
         u (cp.Variable): cvxpy array of size 3xN for control trajectory.
         z (cp.Variable): cvxpy array of size 1xN for log-mass trajectory.
-        sigma (cp.Variable): cvxpy array of size 1xN for slack variable for thrust.
+        sigma (cp.Variable): cvxpy array of size 1xN for sigma = Gamma / mass term.
 
       Returns:
         constraints (list): list of cvxpy constraints for Problems 3 and 4.

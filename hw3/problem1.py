@@ -27,7 +27,7 @@ def _(mo):
     A few further notes:
 
     - For the dynamics constraints, you are free to use any discretization scheme, but forward Euler should suffice.
-    - As discussed in class, the $\frac{\mathbf{T}_c(t)}{m(t)}$ expression in the dynamics is non-convex with respect to $m(t)$ and this necessitates a change-of-variables. Use the reformulation described in `Section III.A` to introduce $z$ and $\Gamma$ as additional decision variables and include the constraints from `Equations 33 - 36`.
+    - As discussed in class, the $\frac{\mathbf{T}_c(t)}{m(t)}$ expression in the dynamics is non-convex with respect to $m(t)$ and this necessitates a change-of-variables. Use the reformulation described in `Section III.A` to introduce $z$ and $\sigma$ as additional decision variables and include the constraints from `Equations 33 - 36`.
     - Note that the constraint in `Equation 5` of $\mathbf{x}(t) \in \mathbf{X}$ simply consists of two separate constraints for (1) the maximum speed and (2) the glideslope constraint detailed in `Equation 12`.
     """
     )
