@@ -72,7 +72,7 @@ class PDGSolver():
     """
     raise NotImplementedError("PDGSolver.construct_dynamics_matrices has yet to be implemented")
 
-  def construct_constraints(self, dt: float, N:int, x:cp.Variable, z:cp.Variable, u:cp.Variable, gamma:cp.Variable) -> list[cp.Expression]:
+  def construct_constraints(self, dt: float, N:int, x:cp.Variable, z:cp.Variable, u:cp.Variable, sigma:cp.Variable) -> list[cp.Expression]:
     """
       Constructs a list of the constraints that are shared between Problems 3 and 4.
 
@@ -82,7 +82,7 @@ class PDGSolver():
         x (cp.Variable): cvxpy array of size 6xN for state trajectory.
         u (cp.Variable): cvxpy array of size 3xN for control trajectory.
         z (cp.Variable): cvxpy array of size 1xN for log-mass trajectory.
-        gamma (cp.Variable): cvxpy array of size 1xN for slack variable for thrust.
+        sigma (cp.Variable): cvxpy array of size 1xN for slack variable for thrust.
 
       Returns:
         constraints (list): list of cvxpy constraints for Problems 3 and 4.
