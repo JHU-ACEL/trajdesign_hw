@@ -60,7 +60,7 @@ class MICPSolver():
     """
     Construct double integrator dynamics matrices Ak and Bk
     """
-    raise NotImplementedError("RRTSolver. has yet to be implemented")
+    raise NotImplementedError("RRTSolver.construct_dynamics_matrices has yet to be implemented")
 
   def construct_obs(self) -> tuple[np.ndarray, list]:
     """
